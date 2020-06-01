@@ -1,0 +1,38 @@
+Prerequisites : 
+1. Download ubuntu 18 & create VirtualBox VM using it
+2. #Install gcc
+
+Build/Run/Tests steps 
+A)clone repository : https://github.com/abhishek-aureaa/Niyuj-CommandClient
+Command : 
+1)git clone https://github.com/abhishek-aureaa/Niyuj-CommandClient
+
+B)Build the source files 
+Commands : 
+1)cd Niyuj-CommandClient
+2)gcc t.c -o server
+3)gcc c.c -o client
+
+C) Run Steps
+Commands
+1) ./server
+2) ./client <Server-IPAddress> 5432
+e.g.,
+./client 127.0.0.1 5432 
+
+
+D) Testing Steps
+After running a the client as above, command prompt would appear , enter the commands there :
+As only "ls" & "pwd" have to be supported, appropriate error message would returned by the server, in case any command other than would be sent. e.g. df, ps etc
+Commands :
+-----------------------
+a) ls 
+b) pwd
+c) df 
+d) cd <DirectoryName>, 
+These will work : 
+Full Directory Name : e.g.,  cd /home/Niyuj-Abhishek
+Relative Directory Name : e.g.,  cd home/Niyuj-Abhishek OR cd home OR cd Niyuj-Abhishek
+Dot-Dot(..) Directoy Name : e.g., cd .. 
+More than one space after cd works : e.g.,  cd /home/Niyuj-Abhishek
+-----------------------
