@@ -22,8 +22,8 @@ e.g.,
 
 
 D) Testing Steps
-After running a the client as above, command prompt would appear , enter the commands there :
-As only "ls" & "pwd" have to be supported, appropriate error message would returned by the server, in case any command other than would be sent. e.g. df, ps etc
+After running the client as above, command prompt would appear , enter the commands there :
+As only "ls" & "pwd" have to be supported, appropriate error message would be returned by the server, in case any command other than these would be sent. e.g. df, ps etc
 Commands :
 -----------------------
 a) ls 
