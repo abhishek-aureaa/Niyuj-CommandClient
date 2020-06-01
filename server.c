@@ -13,14 +13,13 @@
 #include <sys/errno.h>
 
 int main( int argc, char *argv[] ) {
-   system("rm -rf ./bb"); //check if this is required & check if we need to change the file name
    int sockfd, newsockfd, portno, clilen;
    char buffer[256];
    memset(buffer,'\0',256);
    struct sockaddr_in serv_addr, cli_addr;
    int  n;
    
-   /* First call to socket() function */
+   /* Create Socket*/
    sockfd = socket(AF_INET, SOCK_STREAM, 0);
    
    if (sockfd < 0) {
@@ -36,22 +35,18 @@ int main( int argc, char *argv[] ) {
    serv_addr.sin_addr.s_addr = INADDR_ANY;
    serv_addr.sin_port = htons(portno);
    
-   /* Now bind the host address using bind() call.*/
+   /*Bind the socket to port.*/
    if (bind(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
       perror("ERROR on binding");
       exit(1);
    }
       
-   /* Now start listening for the clients, here process will
-      * go in sleep mode and will wait for the incoming connection
-   */
-   
+   /*Limit the connections here*/
    listen(sockfd,5);
    clilen = sizeof(cli_addr);
    
-   /* Accept actual connection from the client */
+   /* Accept the actual connections here*/
    newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &clilen);
-	
    if (newsockfd < 0) {
       perror("ERROR on accept");
       exit(1);
@@ -60,16 +55,15 @@ int main( int argc, char *argv[] ) {
    /* If connection is established then start communicating */
    while(1) 
    {
-	   fclose(fopen("./bb", "w")); //This is required to clear up the content of the file ./bb
-	   bzero(buffer,256);
-	   n = read( newsockfd,buffer,255 );
-	   if (n < 0) {
-	      perror("ERROR reading from socket");
-	      exit(1);
-           }
+   fclose(fopen("./bb", "w")); //Clear up file content for next round of command
+   bzero(buffer,256);
+   n = read( newsockfd,buffer,255 );
+   if (n < 0) {
+      perror("ERROR reading from socket");
+      exit(1);
+   }
 
   if((buffer[0] == 'l') && (buffer[1] == 's'))
-  //if(!strstr(buffer , "ls"))
   {
         printf("its LS command\n"); 
   	system("ls -1F > ./bb");
@@ -83,17 +77,15 @@ int main( int argc, char *argv[] ) {
   {
 	  close(sockfd);
 	  close(newsockfd);
-	  //Perhaps we can give a sleep statement here of time 10 seconds
 	  exit(0);
   }
   else  if((buffer[0] == 'c') && (buffer[1] == 'd'))
   {
         printf("its change directory command\n");
-        char*  temp = buffer+3; //"cd " :  space start at index 2
+        char*  temp = buffer+2; /*"cd " */
 	printf("directory name :%s\n", temp);
 	char str[400];
 	memset(str,'\0', 400);
-
 
 	while((*temp) == ' ')
 	{ 
@@ -102,7 +94,7 @@ int main( int argc, char *argv[] ) {
 	strncpy(str, temp, strlen(temp)-1);
 	if (chdir(str) != 0)
 	{
-		printf("\chdir was not successful, Please check if directory is correct. %d, %d\n", errno, strlen(temp));
+		printf("chdir was not successful, Perhaps directory does not exist.");
 		system("echo Incorrect Directory > ./bb");
 	}
 	else
@@ -113,7 +105,8 @@ int main( int argc, char *argv[] ) {
   }
   else
   {
-      int n = write(newsockfd,"Command not supported\n",strlen("Command not supported\n"));
+      char* message = "Command not supported\n";
+      int n = write(newsockfd,message,strlen(message));
       printf("Command not supported");
       system("echo Command not supported > ./bb");
 
@@ -122,8 +115,7 @@ int main( int argc, char *argv[] ) {
          perror("ERROR writing to socket");
          exit(1);
       }
-      continue;
-      
+      continue;  //proceed with handling of next command
   } 
 
   char a[400];
@@ -133,6 +125,8 @@ int main( int argc, char *argv[] ) {
   FILE* f = fopen("./bb","r");
 
   char* ls_full =  NULL ;
+
+  /*Calculate length of the result of the command executed here*/
   if((buffer[0] == 'l') && (buffer[1] == 's')) { //LS command 
    	while( fgets (a, 400, f)!=NULL ) {
 	int i = 0;
@@ -154,6 +148,8 @@ int main( int argc, char *argv[] ) {
         memset(a,'\0',400);
       }
    fclose(f);
+
+   /*read the command result, Create message for it & Send/Write*/
    ls_full = (char*) malloc(total*sizeof(char));
    memset(ls_full,'\0',total);
    memset(a,'\0',400);
@@ -162,6 +158,8 @@ int main( int argc, char *argv[] ) {
    while( fgets (a, 400, f)!=NULL ) {
        int i = 0;
        slash = 0;
+
+       /*before handle "file" or "dir" prefixes */
        for(; i < strlen(a); i++)
        {
 	  if(a[i]  == '/')
@@ -179,7 +177,6 @@ int main( int argc, char *argv[] ) {
        }
        else
 	     slash = 0;
-	// The slash code above can be modified
        memset(a,'\0',400);
     }
    }
@@ -188,6 +185,7 @@ int main( int argc, char *argv[] ) {
    {
        //The Full Directory name could be theoratically infinitely long, hence this loop is required
         total = 0;
+        /*Calculate length of the result of the command executed here*/
         while( fgets (a, 400, f)!=NULL ) {
             total += strlen(a);
 	    printf("total total : %d\n", total);
@@ -195,13 +193,11 @@ int main( int argc, char *argv[] ) {
             memset(a,'\0',400);
         }
         ls_full = (char*) malloc(total*sizeof(char));
-        fclose(f); 
         memset(ls_full,'\0',total);
         memset(a,'\0',400);
-        f = fopen("./bb","r");
-
-	//We might make use of fseek here
-        //fseek( f, 0, SEEK_SET );
+        fseek( f, 0, SEEK_SET );
+	
+        /*read the command result, Create message for it & Send/Write*/
         while( fgets (a, 400, f)!=NULL ) {
             strcat(ls_full,a);
             memset(a,'\0',400);
@@ -213,14 +209,12 @@ int main( int argc, char *argv[] ) {
    }
 
    /* Write a response to the client */
-   //n = write(newsockfd,ls_full,total);
    n = write(newsockfd,ls_full,strlen(ls_full));
    
    if (n < 0) {
       perror("ERROR writing to socket");
       exit(1);  //in casse of error conditions and here as well, do I need to close the sockets
    }
-   //printf("bytes written  & errno is : %d %d\n" ,n,errno);
    }
       
    return 0;

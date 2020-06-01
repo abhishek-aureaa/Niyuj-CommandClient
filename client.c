@@ -6,13 +6,7 @@
 
 #include <string.h>
 #include <sys/errno.h>
-
-int is_connected(int sock)
-{
-    unsigned char buf;
-    int err = recv(sock,&buf,1,MSG_PEEK);
-    return err == -1 ? 0 : 1;
-}
+#include <unistd.h>
 
 int main(int argc, char *argv[]) {
    int sockfd, portno, n;
@@ -23,25 +17,24 @@ int main(int argc, char *argv[]) {
    char* ls_full = NULL;
    
    if (argc < 3) {
-      fprintf(stderr,"usage %s hostname port\n", argv[0]);
+      fprintf(stderr,"%s hostname port\n", argv[0]);
       exit(0);
    }
 	
    portno = atoi(argv[2]);
    
-   /* Create a socket point */
+   /* Create socket */
    sockfd = socket(AF_INET, SOCK_STREAM, 0);
    
    if (sockfd < 0) {
-      perror("ERROR opening socket");
+      perror("sockert() failed");
       exit(1);
    }
 	
    server = gethostbyname(argv[1]);
-   
    if (server == NULL) {
-      fprintf(stderr,"ERROR, no such host\n");
-      exit(0);
+      fprintf(stderr,"Could not retrieve hostname\n");
+      exit(1);
    }
    
    bzero((char *) &serv_addr, sizeof(serv_addr));
@@ -51,65 +44,63 @@ int main(int argc, char *argv[]) {
    
    /* Now connect to the server */
    if (connect(sockfd, (struct sockaddr*)&serv_addr, sizeof(serv_addr)) < 0) {
-      perror("ERROR connecting");
+      perror("connect() failed");
       exit(1);
    }
    
+   printf("Client Side Command Prompt, Please enter commands\n: ");
    while(1)
    {
-   printf("Please enter the message: ");
-   bzero(buffer,256); //This can be larger size since the command to be sent can be bigger, check it
+   printf("Command : ");
+   bzero(buffer,256); 
    fgets(buffer,255,stdin);
    
    /* Send message to the server */
    n = write(sockfd, buffer, strlen(buffer));
-   //If the message sent here is "bye" , we need to close sockets and exit(0) from here as well
    
    if (n < 0) {
-      perror("ERROR writing to socket");
+      perror("write() failed\n");
       exit(1);
    }
-   fflush(NULL);
+   //fflush(NULL); //optional but useful, in our context
 
-   //if(!strcmp(buffer,"bye"))
+   //"bye" message
    if((buffer[0] == 'b') && (buffer[1] == 'y') && (buffer[2] == 'e'))
    {
       close(sockfd);
       exit(0);
    }
    
-   //need to improve this code
    /* Now read server response */
-   char buffer1[10000];
-   bzero(buffer1,10000);
-   int  is = is_connected(sockfd); //see if this is necessary
+   char buffer1[1000];
+   bzero(buffer1,1000);
 
-   char totalArray[20000];
-   bzero(totalArray,20000);
-   n = read(sockfd, buffer1, 10000);
+   char totalArray[2000];
+   bzero(totalArray,2000);
+   n = read(sockfd, buffer1, 1000);
    if (n < 0) {
     perror("ERROR reading from socket");
     exit(1); //check if there should be exit() or something other system call here
    }
-   if(strcmp(buffer1, ""))
+   //if(strcmp(buffer1, ""))
    {
       strcpy(totalArray, buffer1);	    
    }
    while(n && (!strcmp(buffer1, "")))
    {
    	bzero(buffer1,256);
-   	n = read(sockfd, buffer1, 10000-1);
+   	n = read(sockfd, buffer1, 1000); //1000-1);
 
         if (n < 0) {
      	  perror("ERROR reading from socket");
       	  exit(1);
         }
-        if(strcmp(buffer1, ""))
+        //if(strcmp(buffer1, ""))
  	{		 
            strcpy(totalArray, buffer1);	    
 	}
    }
-   if(strcmp(buffer1, ""))
+   //if(strcmp(buffer1, ""))
    {
         strcpy(totalArray, buffer1);	    
    }

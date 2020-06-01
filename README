@@ -15,7 +15,7 @@ Commands :
 
 C) Run Steps
 Commands
-1) ./server
+1) ./server >& ./server.log
 2) ./client <Server-IPAddress> 5432
 e.g.,
 ./client 127.0.0.1 5432 
