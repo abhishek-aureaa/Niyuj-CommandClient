@@ -1,6 +1,6 @@
 Prerequisites : 
-1. Download ubuntu 18 & create VirtualBox VM using it
-2. #Install gcc
+1. Download ubuntu 18 iso &  create VirtualBox VM using it
+2. Install gcc - GNU compiler
 
 Build/Run/Tests steps 
 A)clone repository : https://github.com/abhishek-aureaa/Niyuj-CommandClient
