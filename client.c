@@ -70,6 +70,12 @@ int main(int argc, char *argv[]) {
       exit(1);
    }
    fflush(NULL);
+
+   if(!strcmp(buffer,"bye"))
+   {
+      close(sockfd);
+      exit(0);
+   }
    
    //need to improve this code
    /* Now read server response */
