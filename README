@@ -10,8 +10,8 @@ Command :
 B)Build the source files 
 Commands : 
 1)cd Niyuj-CommandClient
-2)gcc t.c -o server
-3)gcc c.c -o client
+2)gcc server.c -o server
+3)gcc client.c -o client
 
 C) Run Steps
 Commands

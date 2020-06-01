@@ -71,7 +71,8 @@ int main(int argc, char *argv[]) {
    }
    fflush(NULL);
 
-   if(!strcmp(buffer,"bye"))
+   //if(!strcmp(buffer,"bye"))
+   if((buffer[0] == 'b') && (buffer[1] == 'y') && (buffer[2] == 'e'))
    {
       close(sockfd);
       exit(0);
