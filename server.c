@@ -159,13 +159,27 @@ int main( int argc, char *argv[] ) {
        int i = 0;
        slash = 0;
 
+
+       char creationDate[500]; //"ls command + output dir + filename: 500 should be enough
+       char dateTime[20];
+       memset(creationDate,'\0',500);
+       memset(dateTime,'\0',20);
+       strcat(creationDate, "ls -l --time-style=+%F  > ./output ");
+       strcat(creationDate, a);
+       system(creationDate);
+       system("awk '{print $6}' ./output > ./dateStamp");
+       FILE* ff = fopen("./dateStamp", "r");
+       fgets (dateTime, 20, ff);
+       printf(dateTime);
+       fclose(ff);
+       
+
        /*before handle "file" or "dir" prefixes */
        for(; i < strlen(a); i++)
        {
 	  if(a[i]  == '/')
           {
              strcat(ls_full,"dir ");
-             strcat(ls_full,a);
              slash = 1;
              break;
 	  }
@@ -173,10 +187,14 @@ int main( int argc, char *argv[] ) {
        if(slash  == 0)
        {
          strcat(ls_full,"file ");
-         strcat(ls_full,a);
        }
        else
 	     slash = 0;
+
+       strcat(ls_full,a);
+       strcat(ls_full,dateTime);
+       strcat(ls_full,"\n");
+
        memset(a,'\0',400);
     }
    }

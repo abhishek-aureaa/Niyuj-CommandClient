@@ -36,3 +36,26 @@ Relative Directory Name : e.g.,  cd home/Niyuj-Abhishek OR cd home OR cd Niyuj-A
 Dot-Dot(..) Directoy Name : e.g., cd .. 
 More than one space after cd works : e.g.,  cd /home/Niyuj-Abhishek
 -----------------------
+
+
+
+Other Points :
+----------------------------------------
+1. Assumption, Filename with ls command is not sent with full pathname e.g. a/b/c/d.c & only the filename("d.c) is sent
+2. If the command(one after other) output are getting mixed up, please try with sending commands with a time difference(1 sec or fraction of it)
+3. timestamp is not working at the moment for directory, i am trying to correct it
+4. tried stat() based mechanism for creation date : it did not give correct results, in intial attempts
+   dt will give the file creation date :
+----------------------
+       struct stat st;
+       char* dt = NULL;
+       struct  tm *gmtm;
+       if(stat(filename, &st) != 0 )
+       {
+          gmtm = gmtime(&(st.st_ctime));
+          printf("i am here\n");
+          dt = asctime(gmtm); 
+       }
+----------------------
+If required, I can work & complete any of the above steps
+----------------------------------------
