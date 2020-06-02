@@ -1,6 +1,8 @@
 Prerequisites : 
-1. Download ubuntu 18 iso &  create VirtualBox VM using it
-2. Install gcc - GNU compiler
+1. The assignment was tested on Ubuntu 18. It should work on other Linux Operating systems as well
+2. If Ubuntu 18 machine is not available than Optionally - Please Download ubuntu 18 iso & create Oracle VirtualBox VM using it
+Link : https://releases.ubuntu.com/18.04.4/ubuntu-18.04.4-desktop-amd64.iso
+2. Install gcc - GNU C/C++ compiler
 
 Build/Run/Tests steps 
 A)clone repository : https://github.com/abhishek-aureaa/Niyuj-CommandClient
@@ -45,8 +47,8 @@ Other Points :
 2. If the command(one after other) output are getting mixed up, please try with sending commands with a time difference(1 sec or fraction of it)
 3. timestamp is not working at the moment for directory, i am trying to correct it
 4. tried stat() based mechanism for creation date : it did not give correct results, in intial attempts
-   dt will give the file creation date :
 ----------------------
+   /*dt will give the file creation date : */
        struct stat st;
        char* dt = NULL;
        struct  tm *gmtm;
@@ -57,5 +59,5 @@ Other Points :
           dt = asctime(gmtm); 
        }
 ----------------------
-If required, I can work & complete any of the above steps
+If required, I can work & complete any of the above steps, in "Other Points" section
 ----------------------------------------
