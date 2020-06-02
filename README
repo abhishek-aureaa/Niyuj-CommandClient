@@ -5,7 +5,7 @@ Link : https://releases.ubuntu.com/18.04.4/ubuntu-18.04.4-desktop-amd64.iso
 2. Install gcc - GNU C/C++ compiler
 
 Build/Run/Tests steps 
-A)Download the  Niyuj-CommandClient.zip & Unzip it to folder
+A) Please download the  Niyuj-CommandClient.zip & Unzip it to folder
 
 B)Build the source files 
 Commands : 
